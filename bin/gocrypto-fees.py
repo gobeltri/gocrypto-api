@@ -6,13 +6,13 @@ import json
 import requests
 
 
-binance_fees_url = 'https://www.binance.com/assetWithdraw/getAllAsset.html'
-coinmarketcap_api_url = 'https://api.coinmarketcap.com/v1/'
-cryptocompare_api_url = 'https://min-api.cryptocompare.com/'
+BINANCE_FEES_URL = 'https://www.binance.com/assetWithdraw/getAllAsset.html'
+COINMARKETCAP_API_URL = 'https://api.coinmarketcap.com/v1/'
+CRYPTOCOMPARE_API_URL = 'https://min-api.cryptocompare.com/'
 
 # Returns an object in JSON format with coin information from binance
 def get_binance_fees():
-    response = requests.get(binance_fees_url)
+    response = requests.get(BINANCE_FEES_URL)
 
     if response.status_code == 200:
         coins = json.loads(response.content.decode('utf-8'))
@@ -21,7 +21,13 @@ def get_binance_fees():
         return None
 
 
+
 # Main execution + Use examples
-binance_fees = get_binance_fees()
-print(binance_fees[0]['assetCode'])
-print(binance_fees[0]['transactionFee'])
+def main():
+    binance_fees = get_binance_fees()
+    print(binance_fees[0]['assetCode'])
+    print(binance_fees[0]['transactionFee'])
+
+
+if __name__ == "__main__":
+	main()
