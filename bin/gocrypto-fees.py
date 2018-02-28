@@ -7,26 +7,46 @@ import requests
 
 
 BINANCE_FEES_URL = 'https://www.binance.com/assetWithdraw/getAllAsset.html'
-COINMARKETCAP_API_URL = 'https://api.coinmarketcap.com/v1/'
+COINMARKETCAP_API_URL = 'https://api.coinmarketcap.com/v1/ticker'
 CRYPTOCOMPARE_API_URL = 'https://min-api.cryptocompare.com/'
 
-# Returns an object in JSON format with coin information from binance
-def get_binance_fees():
-    response = requests.get(BINANCE_FEES_URL)
 
-    if response.status_code == 200:
-        coins = json.loads(response.content.decode('utf-8'))
-        return coins
-    else:
+# Returns a dictionary from a JSON API call
+def get_json_dict(json_url) -> dict:
+    
+    # HTTP Request
+    try:
+        response = requests.get(json_url)
+    except requests.exceptions.RequestException() as err:
+        print("Other Error:", err)
         return None
+    
+    # JSON decode
+    try:
+        dictionary = json.loads(response.content.decode('utf-8'))
+    except ValueError as err:
+        print("Value Error: ", err)
+        return None
+    
+    print("Request + JSON decode succeded")
+    return(dictionary)
+
+
 
 
 
 # Main execution + Use examples
 def main():
-    binance_fees = get_binance_fees()
+    
+    # Binance-fees non-official JSON API
+    binance_fees = get_json_dict(BINANCE_FEES_URL)
     print(binance_fees[0]['assetCode'])
     print(binance_fees[0]['transactionFee'])
+    
+    # Coinmarketcap API
+    coinmarketcap_api = get_json_dict(COINMARKETCAP_API_URL)
+    print(coinmarketcap_api[0]['symbol'])
+    print(coinmarketcap_api[0]['price_usd'])    
 
 
 if __name__ == "__main__":
