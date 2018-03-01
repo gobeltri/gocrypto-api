@@ -12,8 +12,8 @@ COINMARKETCAP_API_URL = 'https://api.coinmarketcap.com/v1/ticker'
 CRYPTOCOMPARE_API_URL = 'https://min-api.cryptocompare.com/'
 
 
-# Returns a dictionary from a JSON API call
-def get_json_dict(json_url) -> dict:
+# Returns a list from a JSON API call
+def get_json_dict(json_url) -> list:
     
     # HTTP Request
     try:
@@ -33,7 +33,37 @@ def get_json_dict(json_url) -> dict:
     return(dictionary)
 
 
-
+# @currencies is a list of dictionaries. Each currency is represented by a dictionary like {key1: value1, key2: value2,...}
+def build_fees_dict(coinmarketcap_api, binance_fees, bittrex_currencies) -> list:
+    
+    currencies = []
+    for cmc_item in coinmarketcap_api:
+        attributes = {}
+        attributes['ticker'] = cmc_item['symbol']
+        
+        # Adding binance fee
+        attributes['binance_fee'] = '-'
+        attributes['binance_fee_usd'] = '-'
+        for bin_item in binance_fees:
+            if cmc_item['symbol'] == bin_item['assetCode']:
+                attributes['binance_fee'] = bin_item['transactionFee']
+                attributes['binance_fee_usd'] = bin_item['transactionFee'] * float(cmc_item['price_usd'])
+                break
+        
+        # Adding bittrex fee
+        attributes['bittrex_fee'] = '-'
+        attributes['bittrex_fee_usd'] = '-'
+        for bit_item in bittrex_currencies['result']:
+            if cmc_item['symbol'] == bit_item['Currency']:
+                attributes['bittrex_fee'] = bit_item['TxFee']
+                attributes['bittrex_fee_usd'] = bit_item['TxFee'] * float(cmc_item['price_usd'])
+                break     
+        
+        currencies.append(attributes)
+    
+    return currencies
+    
+    
 
 
 # Main execution + Use examples
@@ -53,6 +83,14 @@ def main():
     bittrex_currencies = get_json_dict(BITTREX_FEES_API_URL)
     print(bittrex_currencies['result'][0]['Currency'])
     print(bittrex_currencies['result'][0]['TxFee'])   
+
+    #
+    currencies = build_fees_dict(coinmarketcap_api, binance_fees, bittrex_currencies)
+    print(currencies)    
+    
+    for currency in currencies:
+        print("Ticker: ", currency['ticker'], " | Binance fee: ", currency['binance_fee'], " / $", currency['binance_fee_usd'], " | Bittrex fee: ", currency['bittrex_fee'], " / $", currency['bittrex_fee_usd'])
+    
 
 if __name__ == "__main__":
 	main()
