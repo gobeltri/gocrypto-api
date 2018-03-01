@@ -7,6 +7,7 @@ import requests
 
 
 BINANCE_FEES_URL = 'https://www.binance.com/assetWithdraw/getAllAsset.html'
+BITTREX_FEES_API_URL = 'https://bittrex.com/api/v1.1/public/getcurrencies'
 COINMARKETCAP_API_URL = 'https://api.coinmarketcap.com/v1/ticker'
 CRYPTOCOMPARE_API_URL = 'https://min-api.cryptocompare.com/'
 
@@ -48,6 +49,10 @@ def main():
     print(coinmarketcap_api[0]['symbol'])
     print(coinmarketcap_api[0]['price_usd'])    
 
+    # Bittrex currencies API
+    bittrex_currencies = get_json_dict(BITTREX_FEES_API_URL)
+    print(bittrex_currencies['result'][0]['Currency'])
+    print(bittrex_currencies['result'][0]['TxFee'])   
 
 if __name__ == "__main__":
 	main()
