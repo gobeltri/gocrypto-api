@@ -34,7 +34,11 @@ def get_json_dict(json_url) -> list:
 
 
 # @currencies is a list of dictionaries. Each currency is represented by a dictionary like {key1: value1, key2: value2,...}
-def build_fees_dict(coinmarketcap_api, binance_fees, bittrex_currencies) -> list:
+def build_fees_list() -> list:
+    
+    coinmarketcap_api = get_json_dict(COINMARKETCAP_API_URL)
+    binance_fees = get_json_dict(BINANCE_FEES_URL)
+    bittrex_currencies = get_json_dict(BITTREX_FEES_API_URL)
     
     currencies = []
     for cmc_item in coinmarketcap_api:
@@ -85,7 +89,7 @@ def main():
     print(bittrex_currencies['result'][0]['TxFee'])   
 
     #
-    currencies = build_fees_dict(coinmarketcap_api, binance_fees, bittrex_currencies)
+    currencies = build_fees_list()
     print(currencies)    
     
     for currency in currencies:
