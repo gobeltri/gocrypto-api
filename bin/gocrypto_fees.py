@@ -4,6 +4,7 @@
 
 import json
 import requests
+from gohttp_server import run_http_server
 
 
 BINANCE_FEES_URL = 'https://www.binance.com/assetWithdraw/getAllAsset.html'
@@ -69,6 +70,9 @@ def build_fees_dict(coinmarketcap_api, binance_fees, bittrex_currencies) -> list
 # Main execution + Use examples
 def main():
     
+    # Running HTTP server
+    run_http_server()
+    
     # Binance-fees non-official JSON API
     binance_fees = get_json_dict(BINANCE_FEES_URL)
     print(binance_fees[0]['assetCode'])
@@ -90,7 +94,6 @@ def main():
     
     for currency in currencies:
         print("Ticker: ", currency['ticker'], " | Binance fee: ", currency['binance_fee'], " / $", currency['binance_fee_usd'], " | Bittrex fee: ", currency['bittrex_fee'], " / $", currency['bittrex_fee_usd'])
-    
 
 if __name__ == "__main__":
 	main()
