@@ -1,10 +1,14 @@
 from http.server import HTTPServer, BaseHTTPRequestHandler
 import time
-from gocrypto_fees import build_fees_list
 import json
+import os
+from gocrypto_fees import build_fees_list
 
-HOSTNAME = ''
-PORT = 8080
+
+# Working both in C9 && Heroku
+HOSTNAME = os.environ.get('IP', '0.0.0.0')
+PORT = int(os.environ.get('PORT', '8080'))
+API_PATH = '/api/v1'
 
 
 # Override SimpleHTTPRequestHandler to serve GET requests
@@ -12,6 +16,15 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
     
     def do_GET(self):
         
+        # Accepting connections on /api/v1
+        if self.path != API_PATH:
+            self.send_response(200)
+            self.end_headers()
+            content = "<b>Welcome cypherpunk!</b>"
+            body = content.encode('UTF-8', 'replace')
+            self.wfile.write(body)
+            return
+            
         # Response ok
         self.send_response(200)
         
