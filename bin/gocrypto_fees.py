@@ -10,6 +10,7 @@ BINANCE_FEES_URL = 'https://www.binance.com/assetWithdraw/getAllAsset.html'
 BITTREX_FEES_API_URL = 'https://bittrex.com/api/v1.1/public/getcurrencies'
 COINMARKETCAP_API_URL = 'https://api.coinmarketcap.com/v1/ticker'
 CRYPTOCOMPARE_API_URL = 'https://min-api.cryptocompare.com/'
+POLONIEX_API_URL = 'https://poloniex.com/public?command=returnCurrencies'
 
 
 # Returns a list from a JSON API call
@@ -39,6 +40,7 @@ def build_fees_list() -> list:
     coinmarketcap_api = get_json_dict(COINMARKETCAP_API_URL)
     binance_fees = get_json_dict(BINANCE_FEES_URL)
     bittrex_currencies = get_json_dict(BITTREX_FEES_API_URL)
+    poloniex_currencies = get_json_dict(POLONIEX_API_URL)
     
     currencies = []
     for cmc_item in coinmarketcap_api:
@@ -51,7 +53,7 @@ def build_fees_list() -> list:
         for bin_item in binance_fees:
             if cmc_item['symbol'] == bin_item['assetCode']:
                 attributes['binance_fee'] = bin_item['transactionFee']
-                attributes['binance_fee_usd'] = bin_item['transactionFee'] * float(cmc_item['price_usd'])
+                attributes['binance_fee_usd'] = round(float(bin_item['transactionFee']) * float(cmc_item['price_usd']), 2)
                 break
         
         # Adding bittrex fee
@@ -60,8 +62,18 @@ def build_fees_list() -> list:
         for bit_item in bittrex_currencies['result']:
             if cmc_item['symbol'] == bit_item['Currency']:
                 attributes['bittrex_fee'] = bit_item['TxFee']
-                attributes['bittrex_fee_usd'] = bit_item['TxFee'] * float(cmc_item['price_usd'])
+                attributes['bittrex_fee_usd'] = round(float(bit_item['TxFee']) * float(cmc_item['price_usd']), 2)
                 break     
+        
+        # Adding poloniex fee
+        attributes['poloniex_fee'] = '-'
+        attributes['poloniex_fee_usd'] = '-'
+        for polo_key in poloniex_currencies.keys():
+            if cmc_item['symbol'] == polo_key:
+                attributes['poloniex_fee'] = float(poloniex_currencies[polo_key]['txFee'])
+                attributes['poloniex_fee_usd'] = round(float(poloniex_currencies[polo_key]['txFee']) * float(cmc_item['price_usd']), 2)
+                break
+        
         
         currencies.append(attributes)
     
@@ -73,6 +85,7 @@ def build_fees_list() -> list:
 # Main execution + Use examples
 def main():
     
+    """
     # Binance-fees non-official JSON API
     binance_fees = get_json_dict(BINANCE_FEES_URL)
     print(binance_fees[0]['assetCode'])
@@ -87,13 +100,14 @@ def main():
     bittrex_currencies = get_json_dict(BITTREX_FEES_API_URL)
     print(bittrex_currencies['result'][0]['Currency'])
     print(bittrex_currencies['result'][0]['TxFee'])   
-
+    """
+    
     #
     currencies = build_fees_list()
     print(currencies)    
     
     for currency in currencies:
-        print("Ticker: ", currency['ticker'], " | Binance fee: ", currency['binance_fee'], " / $", currency['binance_fee_usd'], " | Bittrex fee: ", currency['bittrex_fee'], " / $", currency['bittrex_fee_usd'])
+        print("Ticker: ", currency['ticker'], " | Binance fee: ", currency['binance_fee'], " / $", currency['binance_fee_usd'], " | Bittrex fee: ", currency['bittrex_fee'], " / $", currency['bittrex_fee_usd'], "| Poloniex fee: ", currency['poloniex_fee'], " / $", currency['poloniex_fee_usd'])
     
 
 if __name__ == "__main__":
