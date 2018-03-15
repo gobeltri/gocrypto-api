@@ -1,4 +1,4 @@
-from http.server import HTTPServer, BaseHTTPRequestHandler
+from http.server import HTTPServer, SimpleHTTPRequestHandler
 import time
 import json
 import os
@@ -12,35 +12,38 @@ API_PATH = '/api/v1'
 
 
 # Override SimpleHTTPRequestHandler to serve GET requests
-class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
+class MyRequestHandler(SimpleHTTPRequestHandler):
     
     def do_GET(self):
         
-        # Accepting connections on /api/v1
-        if self.path != API_PATH:
+        # Root path
+        if self.path == '/':
+            self.path = '/public/index.html'
+            return SimpleHTTPRequestHandler.do_GET(self)
+        
+        # API path
+        elif self.path == API_PATH:
+            
+            # Response ok
             self.send_response(200)
+        
+            # JSON Header
+            self.send_header('Content-Type', 'application/json')
             self.end_headers()
-            content = "<b>Welcome cypherpunk!</b>"
+        
+            # Print list
+            currencies = build_fees_list()
+            content = json.dumps(currencies)
             body = content.encode('UTF-8', 'replace')
             self.wfile.write(body)
-            return
             
-        # Response ok
-        self.send_response(200)
-        
-        # JSON Header
-        self.send_header('Content-Type', 'application/json')
-        self.end_headers()
-        
-        # Print list
-        currencies = build_fees_list()
-        content = json.dumps(currencies)
-        body = content.encode('UTF-8', 'replace')
-        self.wfile.write(body)
-        
+            
+        # Other paths > call super class
+        else:
+            return SimpleHTTPRequestHandler.do_GET(self)
 
 def run_goserver(hostname, port):
-    httpd = HTTPServer((hostname, port), SimpleHTTPRequestHandler)
+    httpd = HTTPServer((hostname, port), MyRequestHandler)
     print(time.asctime(), "Server Starts - %s:%s" % (hostname, port))
 
     try:
