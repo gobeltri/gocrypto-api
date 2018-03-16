@@ -30,7 +30,6 @@ def get_json_dict(json_url) -> list:
         print("Value Error: ", err)
         return None
     
-    print("Request + JSON decode succeded")
     return(dictionary)
 
 
