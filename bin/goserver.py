@@ -29,6 +29,7 @@ class MyRequestHandler(SimpleHTTPRequestHandler):
         
             # JSON Header
             self.send_header('Content-Type', 'application/json')
+            self.send_header('Access-Control-Allow-Origin', '*')
             self.end_headers()
         
             # Print list
