@@ -47,8 +47,8 @@ def build_fees_list() -> list:
         attributes['ticker'] = cmc_item['symbol']
         
         # Adding binance fee
-        attributes['binance_fee'] = '-'
-        attributes['binance_fee_usd'] = '-'
+        attributes['binance_fee'] = None
+        attributes['binance_fee_usd'] = None
         for bin_item in binance_fees:
             if cmc_item['symbol'] == bin_item['assetCode']:
                 attributes['binance_fee'] = bin_item['transactionFee']
@@ -56,8 +56,8 @@ def build_fees_list() -> list:
                 break
         
         # Adding bittrex fee
-        attributes['bittrex_fee'] = '-'
-        attributes['bittrex_fee_usd'] = '-'
+        attributes['bittrex_fee'] = None
+        attributes['bittrex_fee_usd'] = None
         for bit_item in bittrex_currencies['result']:
             if cmc_item['symbol'] == bit_item['Currency']:
                 attributes['bittrex_fee'] = bit_item['TxFee']
@@ -65,8 +65,8 @@ def build_fees_list() -> list:
                 break     
         
         # Adding poloniex fee
-        attributes['poloniex_fee'] = '-'
-        attributes['poloniex_fee_usd'] = '-'
+        attributes['poloniex_fee'] = None
+        attributes['poloniex_fee_usd'] = None
         for polo_key in poloniex_currencies.keys():
             if cmc_item['symbol'] == polo_key:
                 attributes['poloniex_fee'] = float(poloniex_currencies[polo_key]['txFee'])

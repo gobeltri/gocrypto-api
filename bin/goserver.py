@@ -34,7 +34,7 @@ class MyRequestHandler(SimpleHTTPRequestHandler):
         
             # Print list
             currencies = build_fees_list()
-            content = json.dumps(currencies)
+            content = json.dumps(currencies, separators=(',',':'))
             body = content.encode('UTF-8', 'replace')
             self.wfile.write(body)
             
