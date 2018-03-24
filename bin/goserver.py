@@ -2,7 +2,7 @@ from http.server import HTTPServer, SimpleHTTPRequestHandler
 import time
 import json
 import os
-from gocrypto_fees import build_fees_list
+
 from coin import Coin
 
 
@@ -38,8 +38,6 @@ class MyRequestHandler(SimpleHTTPRequestHandler):
             content = Coin.get_json()
             body = content.encode('UTF-8', 'replace')
             self.wfile.write(body)
-            
-            
             
             
         # Other paths > call super class
