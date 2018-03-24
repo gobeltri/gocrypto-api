@@ -3,6 +3,7 @@ import time
 import json
 import os
 from gocrypto_fees import build_fees_list
+from coin import Coin
 
 
 # Working both in C9 && Heroku
@@ -32,11 +33,13 @@ class MyRequestHandler(SimpleHTTPRequestHandler):
             self.send_header('Access-Control-Allow-Origin', '*')
             self.end_headers()
         
-            # Print list
-            currencies = build_fees_list()
-            content = json.dumps(currencies, separators=(',',':'))
+            # Print coin list in JSON format
+            Coin.api_seed('COINMARKETCAP')
+            content = Coin.get_json()
             body = content.encode('UTF-8', 'replace')
             self.wfile.write(body)
+            
+            
             
             
         # Other paths > call super class
