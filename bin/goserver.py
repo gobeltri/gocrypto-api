@@ -1,7 +1,5 @@
-from http.server import HTTPServer, SimpleHTTPRequestHandler
-import time
-import json
 import os
+from flask import Flask
 
 from coin import Coin
 
@@ -11,48 +9,22 @@ HOSTNAME = os.environ.get('IP', '0.0.0.0')
 PORT = int(os.environ.get('PORT', '8080'))
 API_PATH = '/api/v1'
 
-
-# Override SimpleHTTPRequestHandler to serve GET requests
-class MyRequestHandler(SimpleHTTPRequestHandler):
+# Flask app
+app = Flask(__name__)
     
-    def do_GET(self):
-        
-        # Root path
-        if self.path == '/':
-            self.path = '/public/index.html'
-            return SimpleHTTPRequestHandler.do_GET(self)
-        
-        # API path
-        elif self.path == API_PATH:
-            
-            # Response ok
-            self.send_response(200)
-        
-            # JSON Header
-            self.send_header('Content-Type', 'application/json')
-            self.send_header('Access-Control-Allow-Origin', '*')
-            self.end_headers()
-        
-            # Print coin list in JSON format
-            Coin.api_seed('COINMARKETCAP')
-            content = Coin.get_json()
-            body = content.encode('UTF-8', 'replace')
-            self.wfile.write(body)
-            
-            
-        # Other paths > call super class
-        else:
-            return SimpleHTTPRequestHandler.do_GET(self)
-
-def run_goserver(hostname, port):
-    httpd = HTTPServer((hostname, port), MyRequestHandler)
-    print(time.asctime(), "Server Starts - %s:%s" % (hostname, port))
-
-    try:
-        httpd.serve_forever()
-    except KeyboardInterrupt:
-        print(time.asctime(), "Server Stops - %s:%s" % (hostname, port))
-
-
+@app.route(API_PATH)
+def api():
+    # Print coin list in JSON format
+    Coin.api_seed('COINMARKETCAP')
+    content = Coin.get_json()
+    body = content.encode('UTF-8', 'replace')
+    
+    response = app.make_response(body)
+    response.headers['Content-Type'] = 'application/json'
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    return(response)
+    
 if __name__ == "__main__":
-	run_goserver(HOSTNAME, PORT)
+    app.run(host=HOSTNAME, port=PORT)
+	
+	
