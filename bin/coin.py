@@ -92,3 +92,13 @@ class Coin():
             d_list.append(c.__dict__)
             
         return json.dumps(d_list, separators=(',',':'))
+
+    @staticmethod
+    def find_coin(ticker):
+        result = None
+        for c in Coin.__coin_list:
+            if c.ticker == ticker:
+                result = c.__dict__
+                break
+        
+        return json.dumps(result, separators=(',',':'))

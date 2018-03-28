@@ -1,8 +1,14 @@
-# gocrypto-fees
-Comparing withdraw fees from different crypto exchanges.
+# Gocrypto
+REST API with Crypto metrics.
 
-## Live API
-https://gocrypto-fees.herokuapp.com/api/v1
+## Use cases
+* https://gocryp.github.io/
+  * Compare crypto withdrawal fees.
+
+## API
+* https://gocrypto-api.herokuapp.com
+* https://gocrypto-api.herokuapp.com/coins
+* https://gocrypto-api.herokuapp.com/coin/\<ticker\>
 
 ## Development
 Go to https://c9.io/new and create a new workspace from Python template.
@@ -20,8 +26,8 @@ sudo pip3 install pipenv
 
 ```
 # Install virtual environment for current Pipfile and enter virtual shell
-git clone https://github.com/gobeltri/gocrypto-fees.git
-cd gocrypto-fees
+git clone https://github.com/gobeltri/gocrypto-api.git
+cd gocrypto-api
 pipenv install
 pipenv shell
 ```
