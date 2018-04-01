@@ -2,6 +2,7 @@ import requests
 import json
 from exchange.bittrex_api import BittrexAPIClient
 from exchange.poloniex_api import PoloniexAPIClient
+from exchange.binance_api import BinanceAPIClient
 
 class Coin():
     
@@ -12,11 +13,6 @@ class Coin():
     __coinmarketcap_api_url = 'https://api.coinmarketcap.com/v1'
     __coinmarketcap_ticker_path = 'ticker'
     
-    # Exchange APIs
-    __binance_api_url = 'https://www.binance.com'
-    __binance_fees_path = 'assetWithdraw/getAllAsset.html'
-    
-
     
     def __init__(self, ticker, rank, price_usd):
         self.ticker = ticker
@@ -27,8 +23,11 @@ class Coin():
         #self.exchanges = []
         self.binance_fee = None
         self.binance_fee_usd = None
+        self.bittrex_fee = None
+        self.bittrex_fee_usd = None       
+        self.poloniex_fee = None
+        self.poloniex_fee_usd = None
         
-
     @staticmethod
     def api_seed (api_id):
         
@@ -47,8 +46,8 @@ class Coin():
     def __refresh_withdrawal_fees(exchanges):
         
         if 'BINANCE' in exchanges:
-            bin_response = requests.get(Coin.__binance_api_url + '/' + Coin.__binance_fees_path)
-            bin_list = json.loads(bin_response.content.decode('utf-8'))
+            bin = BinanceAPIClient()
+            bin_list = bin.get_withdrawal_fees()
         
         if 'BITTREX' in exchanges:
             bit = BittrexAPIClient()
@@ -61,8 +60,8 @@ class Coin():
         for coin in Coin.__coin_list:
             
             for bin_coin in bin_list:
-                if (coin.ticker == bin_coin['assetCode']):
-                    coin.binance_fee = bin_coin['transactionFee']
+                if (coin.ticker == bin_coin['ticker']):
+                    coin.binance_fee = bin_coin['withdrawal_fee']
                     coin.binance_fee_usd = round(float(coin.binance_fee) * float(coin.price_usd), 2)
                     break
                 
