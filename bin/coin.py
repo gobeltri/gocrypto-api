@@ -1,5 +1,6 @@
 import requests
 import json
+from exchange.bittrex_api import BittrexAPIClient
 
 class Coin():
     
@@ -13,8 +14,6 @@ class Coin():
     # Exchange APIs
     __binance_api_url = 'https://www.binance.com'
     __binance_fees_path = 'assetWithdraw/getAllAsset.html'
-    __bittrex_api_url = 'https://bittrex.com/api/v1.1/public'
-    __bittrex_fees_path = 'getcurrencies'
     __poloniex_api_url = 'https://poloniex.com/public'
     __poloniex_fees_path = '?command=returnCurrencies'
     
@@ -57,9 +56,9 @@ class Coin():
             bin_list = json.loads(bin_response.content.decode('utf-8'))
         
         if 'BITTREX' in exchanges:
-            bit_response = requests.get(Coin.__bittrex_api_url + '/' + Coin.__bittrex_fees_path)
-            bit_list = json.loads(bit_response.content.decode('utf-8'))
-        
+            bit = BittrexAPIClient()
+            bit_list = bit.get_withdrawal_fees()
+
         if 'POLONIEX' in exchanges:
             polo_response = requests.get(Coin.__poloniex_api_url + Coin.__poloniex_fees_path)
             polo_list = json.loads(polo_response.content.decode('utf-8'))
@@ -72,9 +71,9 @@ class Coin():
                     coin.binance_fee_usd = round(float(coin.binance_fee) * float(coin.price_usd), 2)
                     break
                 
-            for bit_coin in bit_list['result']:
-                if (coin.ticker == bit_coin['Currency']):
-                    coin.bittrex_fee = bit_coin['TxFee']
+            for bit_coin in bit_list:
+                if (coin.ticker == bit_coin['ticker']):
+                    coin.bittrex_fee = bit_coin['withdrawal_fee']
                     coin.bittrex_fee_usd = round(float(coin.bittrex_fee) * float(coin.price_usd), 2)
                     break
                 
