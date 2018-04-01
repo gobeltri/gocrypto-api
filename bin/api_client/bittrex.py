@@ -1,4 +1,4 @@
-from exchange.base_api import BaseAPIClient
+from api_client.base import BaseAPIClient
 import json
 
 class BittrexAPIClient(BaseAPIClient):
@@ -8,6 +8,12 @@ class BittrexAPIClient(BaseAPIClient):
         self.FEES_PATH = 'getcurrencies'
     
     def get_withdrawal_fees(self) -> list:
+        """
+        Get a list of coins and its withdrawal fees
+        :return:
+            ticker	[string]
+            withdrawal_fee	[float]
+        """
         response = self._call(self.API_URL + '/' + self.FEES_PATH)
         response_json = json.loads(response.content.decode('utf-8'))
         withdrawal_fees = []

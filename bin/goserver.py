@@ -1,7 +1,7 @@
 import os
 from flask import Flask
 
-from coin import Coin
+from coin_list import CoinList
 
 # Working both in C9 && Heroku
 HOSTNAME = os.environ.get('IP', '0.0.0.0')
@@ -17,17 +17,20 @@ def root():
     
 @app.route('/coins')
 def coins():
-    Coin.api_seed('COINMARKETCAP')
-    content = Coin.get_json()
+    cl = CoinList()
+    cl.seed(CoinList.COINMARKETCAP)
+    cl.update_withdrawal_fees([CoinList.BINANCE, CoinList.BITTREX, CoinList.POLONIEX])
+    content = cl.to_json()
     return(build_json_response(content))
-
 
 @app.route('/coin/<ticker>', methods=['GET', 'POST'])
 def coin(ticker):
-    Coin.api_seed('COINMARKETCAP')
-    content = Coin.find_coin(ticker)
+    cl = CoinList()
+    cl.seed(CoinList.COINMARKETCAP)
+    cl.update_withdrawal_fees([CoinList.BINANCE, CoinList.BITTREX, CoinList.POLONIEX])
+    coin = cl.find_coin(ticker)
+    content = coin.to_json()
     return(build_json_response(content))
-
 
 def build_json_response(content):
     response = app.make_response(content)
