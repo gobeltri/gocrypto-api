@@ -15,6 +15,10 @@ class Coin():
         self.bittrex_fee_usd = None       
         self.poloniex_fee = None
         self.poloniex_fee_usd = None
+        self.kraken_fee = None
+        self.kraken_fee_usd = None
+        self.kucoin_fee = None
+        self.kucoin_fee_usd = None        
         
     def to_json(self) -> dict:
         return json.dumps(self.__dict__, separators=(',',':'))

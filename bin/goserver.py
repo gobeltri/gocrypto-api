@@ -19,7 +19,7 @@ def root():
 def coins():
     cl = CoinList()
     cl.seed(CoinList.COINMARKETCAP)
-    cl.update_withdrawal_fees([CoinList.BINANCE, CoinList.BITTREX, CoinList.POLONIEX])
+    cl.update_withdrawal_fees([CoinList.BINANCE, CoinList.BITTREX, CoinList.POLONIEX, CoinList.KRAKEN, CoinList.KUCOIN])
     content = cl.to_json()
     return(build_json_response(content))
 
@@ -27,7 +27,7 @@ def coins():
 def coin(ticker):
     cl = CoinList()
     cl.seed(CoinList.COINMARKETCAP)
-    cl.update_withdrawal_fees([CoinList.BINANCE, CoinList.BITTREX, CoinList.POLONIEX])
+    cl.update_withdrawal_fees([CoinList.BINANCE, CoinList.BITTREX, CoinList.POLONIEX, CoinList.KRAKEN, CoinList.KUCOIN])
     coin = cl.find_coin(ticker)
     content = coin.to_json()
     return(build_json_response(content))

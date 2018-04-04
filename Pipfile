@@ -7,3 +7,4 @@ python_version = "3.6"
 
 requests = ">2.18"
 flask = "*"
+ccxt = "*"
